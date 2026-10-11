@@ -1,10 +1,13 @@
+"""Ticket creation, input validation, and priority calculation."""
 
 VALID_CATEGORIES = ("Network", "Hardware", "Software", "Other")
 VALID_URGENCIES = ("low", "medium", "high")
+VALID_PRIORITIES = ("critical", "high", "medium", "low")
 
 
 def calculate_priority(urgency, affected_users):
-    # Validate inputs before calculating priority.
+    """Return the priority for a validated urgency level and user count."""
+    # Validate both inputs before applying any rule.
     if not isinstance(urgency, str) or urgency.strip().lower() not in VALID_URGENCIES:
         raise ValueError("Urgency must be low, medium, or high")
 
@@ -13,7 +16,7 @@ def calculate_priority(urgency, affected_users):
 
     urgency = urgency.strip().lower()
 
-    # Check rules in the required order.
+    # Apply the rules in order and return the first match.
     if urgency == "high" and affected_users >= 10:
         return "critical"
     if urgency == "high" or affected_users >= 10:
@@ -23,8 +26,27 @@ def calculate_priority(urgency, affected_users):
     return "low"
 
 
+def next_ticket_id(tickets):
+    """Return the next sequential ticket ID based on the existing tickets."""
+    # Find the highest numeric ID so numbering continues after a reload.
+    highest_id = 0
+    for ticket in tickets:
+        if not isinstance(ticket, dict):
+            continue
+        ticket_id = ticket.get("id")
+        if not isinstance(ticket_id, str):
+            continue
+        number = ticket_id[1:]
+        if ticket_id[:1] == "T" and number.isdigit():
+            highest_id = max(highest_id, int(number))
+
+    return f"T{highest_id + 1:03d}"
+
+
 def create_ticket(tickets, title, category, urgency, affected_users):
-    # Validate and normalize all inputs before modifying the ticket list.
+    """Validate and normalize the input, then append a new ticket."""
+    # Validate and normalize everything before touching the ticket list, so an
+    # invalid request can never leave a partial ticket behind.
     if not isinstance(title, str) or not title.strip():
         raise ValueError("Title cannot be blank")
 
@@ -43,20 +65,11 @@ def create_ticket(tickets, title, category, urgency, affected_users):
     if urgency not in VALID_URGENCIES:
         raise ValueError("Urgency must be low, medium, or high")
 
-    # Calculate priority also validates affected_users.
+    # calculate_priority also validates affected_users.
     priority = calculate_priority(urgency, affected_users)
 
-    # Find the highest existing numeric ID to avoid duplicates after reload.
-    highest_id = 0
-    for ticket in tickets:
-        ticket_id = ticket.get("id", "")
-        if isinstance(ticket_id, str) and ticket_id.startswith("T"):
-            number = ticket_id[1:]
-            if number.isdigit():
-                highest_id = max(highest_id, int(number))
-
     ticket = {
-        "id": f"T{highest_id + 1:03d}",
+        "id": next_ticket_id(tickets),
         "title": title.strip(),
         "category": category,
         "urgency": urgency,

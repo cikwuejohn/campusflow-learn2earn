@@ -254,7 +254,7 @@ campusflow-learn2earn/
 │   └── test_reports.py
 ├── docs/
 │   ├── design-decisions.md      # Agreed data structures, contracts, and ownership
-│   └── ai-learning-log..md      # AI learning log (per-fellow entries)
+│   └── ai-learning-log.md       # AI learning log (per-fellow entries)
 └── README.md
 ```
 

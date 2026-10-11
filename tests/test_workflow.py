@@ -205,6 +205,23 @@ class WorkQueueTests(unittest.TestCase):
 
         self.assertEqual([ticket["id"] for ticket in tickets], original_order)
 
+    def test_malformed_id_does_not_crash_the_queue(self):
+        # "²" passes str.isdigit() but int() rejects it; the queue must cope.
+        tickets = [
+            make_ticket("T002", "high"),
+            make_ticket("T²", "high"),
+        ]
+
+        queue = get_work_queue(tickets)
+
+        self.assertEqual([ticket["id"] for ticket in queue], ["T²", "T002"])
+
+    def test_unrecognised_priority_raises_value_error(self):
+        tickets = [make_ticket("T001", "urgent")]
+
+        with self.assertRaises(ValueError):
+            get_work_queue(tickets)
+
 
 if __name__ == "__main__":
     unittest.main()

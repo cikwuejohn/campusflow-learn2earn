@@ -5,7 +5,8 @@ from pathlib import Path
 
 from campusflow.tickets import VALID_CATEGORIES, VALID_PRIORITIES, VALID_URGENCIES
 
-DEFAULT_FILENAME = "tickets.json"
+# Path agreed with Engineer B in docs/design-decisions.md section 8.
+DEFAULT_STORAGE_PATH = "data/tickets.json"
 
 # Statuses follow the lifecycle agreed with Engineer B (open -> in_progress ->
 # resolved). Update this tuple together if that lifecycle ever changes.
@@ -77,12 +78,15 @@ def _validate_tickets(tickets):
         seen_ids.add(ticket_id)
 
 
-def save_tickets(tickets, filename=DEFAULT_FILENAME):
+def save_tickets(tickets, filename=DEFAULT_STORAGE_PATH):
     """Save tickets to a JSON file, writing atomically to avoid corruption."""
     if not isinstance(tickets, list):
         raise ValueError("Tickets to save must be a list.")
 
     path = Path(filename)
+    # Create the data directory on first run.
+    path.parent.mkdir(parents=True, exist_ok=True)
+
     # Write to a temporary file first so a crash cannot truncate the real file.
     temp_path = path.with_name(f"{path.name}.tmp")
 
@@ -92,7 +96,7 @@ def save_tickets(tickets, filename=DEFAULT_FILENAME):
     temp_path.replace(path)
 
 
-def load_tickets(filename=DEFAULT_FILENAME):
+def load_tickets(filename=DEFAULT_STORAGE_PATH):
     """Load and validate tickets from a JSON file."""
     path = Path(filename)
 

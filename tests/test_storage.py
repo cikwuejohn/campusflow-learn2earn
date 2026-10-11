@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from campusflow.storage import load_tickets, save_tickets
+from campusflow.storage import DEFAULT_STORAGE_PATH, load_tickets, save_tickets
 from campusflow.tickets import create_ticket
 
 
@@ -29,7 +29,8 @@ class StorageTests(unittest.TestCase):
     def setUp(self):
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
-        self.path = Path(folder.name) / "tickets.json"
+        self.folder = Path(folder.name)
+        self.path = self.folder / "tickets.json"
 
     def write(self, content):
         self.path.write_text(content, encoding="utf-8")
@@ -118,6 +119,16 @@ class StorageTests(unittest.TestCase):
     def test_save_rejects_non_list(self):
         with self.assertRaises(ValueError):
             save_tickets({"id": "T001"}, self.path)
+
+    def test_default_storage_path_matches_design_decision(self):
+        self.assertEqual(Path(DEFAULT_STORAGE_PATH), Path("data") / "tickets.json")
+
+    def test_save_creates_missing_data_directory(self):
+        nested = self.folder / "data" / "tickets.json"
+
+        save_tickets([make_ticket()], nested)
+
+        self.assertEqual(load_tickets(nested), [make_ticket()])
 
     def test_ids_continue_after_reload(self):
         save_tickets([make_ticket()], self.path)

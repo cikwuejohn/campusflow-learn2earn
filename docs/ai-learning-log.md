@@ -6,7 +6,7 @@ in the Fellows' Engineering Guide (section 5.3).
 
 - **Engineer A — Ochai Stanley:** ticket creation, input validation, priority
   calculation, ticket ID generation, JSON storage and the matching tests.
-- **Engineer B:** ticket assignment, status lifecycle, work queue, reports and
+- **Engineer B — Christopher Ikwue John:** ticket assignment, status lifecycle, work queue, reports and
   the matching CLI actions and tests.
 
 ---
@@ -493,9 +493,9 @@ one, listed here so a reviewer can find them quickly:
 
 ---
 
-## Engineer B
+## Engineer B — Christopher Ikwue John
 
-**Engineer B** · Ticket assignment, status management, work queue, reports, tests and CLI integration
+**Christopher Ikwue John (Engineer B)** · Ticket assignment, status management, work queue, reports, tests and CLI integration
 **Branch:** `feat/2-status-workflow` · **Repo:** `cikwuejohn/campusflow-learn2earn`
 
 This log records how I used an AI assistant while completing my part
@@ -715,7 +715,7 @@ away.
 
 ---
 
-### 5. Definition of Done — Engineer B
+### 5. Definition of Done — Christopher Ikwue John (Engineer B)
 
 - [x] Ticket assignment works correctly.
 - [x] Status transitions follow the required lifecycle.

@@ -3,7 +3,7 @@
 **Engineer B** · Ticket assignment, status management, work queue, reports, tests and CLI integration
 **Branch:** `feat/2-status-workflow` · **Repo:** `cikwuejohn/campusflow-learn2earn`
 
-This log records how I used an AI assistant (Claude Code) while completing my part
+This log records how I used an AI assistant while completing my part
 of CampusFlow, what I asked it, what I accepted or rejected, and what I learned.
 The assistant wrote and explained code, but I owned the design decisions, reviewed
 every change, and verified each step by running the test suite myself.

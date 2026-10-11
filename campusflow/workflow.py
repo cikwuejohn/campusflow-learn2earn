@@ -33,7 +33,25 @@ def ticket_number(ticket):
     """
     ticket_id = ticket.get("id", "")
     suffix = str(ticket_id)[1:]
-    return int(suffix) if suffix.isdigit() else 0
+    # str.isdigit() also accepts non-ASCII digits such as "²", which int()
+    # rejects, so require ASCII digits to keep the queue from crashing.
+    if suffix.isascii() and suffix.isdigit():
+        return int(suffix)
+    return 0
+
+
+def priority_rank(ticket):
+    """Return the queue sort rank for a ticket's priority.
+
+    Raises ValueError (rather than a bare KeyError) for an unrecognised
+    priority, matching the contract that invalid values raise ValueError.
+    """
+    priority = ticket.get("priority")
+    if priority not in PRIORITY_ORDER:
+        raise ValueError(
+            f"Ticket {ticket.get('id')} has an invalid priority: {priority!r}"
+        )
+    return PRIORITY_ORDER[priority]
 
 
 def assign_ticket(tickets, ticket_id, staff_name):
@@ -100,7 +118,7 @@ def get_work_queue(tickets):
     return sorted(
         open_tickets,
         key=lambda ticket: (
-            PRIORITY_ORDER[ticket["priority"]],
+            priority_rank(ticket),
             ticket_number(ticket),
         ),
     )
